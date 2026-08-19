@@ -1,0 +1,11 @@
+flowchart LR
+  A["Compressed source archives"] --> B["Schema, overlap and row controls"]
+  B --> C["Typed partitioned Parquet"]
+  C --> D["DuckDB and dbt semantic warehouse"]
+  D --> E["Cutoff-safe cohorts and segments"]
+  D --> F["Repeat-subscriber churn evaluation"]
+  F --> G["Private capacity and sensitivity planner"]
+  E --> H["Static React analytical product"]
+  C --> I["Re-keyed public Parquet release"]
+  H --> J["Cloudflare Pages"]
+  I --> K["Hugging Face dataset"]

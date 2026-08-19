@@ -1,0 +1,66 @@
+name: quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install -r requirements.txt -r requirements-dev.txt
+      - run: python scripts/build_release_fixture.py --warehouse "$RUNNER_TEMP/retention.duckdb" --curve "$RUNNER_TEMP/scenario.json"
+      - run: python -m ruff check .
+      - run: python -m compileall -q retention_api scripts tests
+      - run: python -m unittest discover -s tests -v
+        env:
+          RETENTION_WAREHOUSE_PATH: ${{ runner.temp }}/retention.duckdb
+          RETENTION_SCENARIO_CURVE_PATH: ${{ runner.temp }}/scenario.json
+      - run: dbt parse --profiles-dir . --no-use-colors
+        env:
+          RETENTION_WAREHOUSE_PATH: ${{ runner.temp }}/dbt-parse.duckdb
+          RETENTION_FACTS_DIR: ${{ runner.temp }}/facts
+      - run: python scripts/verify_power_bi_contract.py --warehouse "$RUNNER_TEMP/retention.duckdb"
+
+  browser-product:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: python -m pip install -r requirements.txt
+      - run: python scripts/build_release_fixture.py --warehouse "$RUNNER_TEMP/retention.duckdb" --curve "$RUNNER_TEMP/scenario.json"
+      - run: npm ci
+        working-directory: web
+      - run: npm run lint
+        working-directory: web
+      - run: npm run build
+        working-directory: web
+      - run: npx playwright install --with-deps chromium
+        working-directory: web
+      - run: npm test
+        working-directory: web
+        env:
+          RETENTION_WAREHOUSE_PATH: ${{ runner.temp }}/retention.duckdb
+          RETENTION_SCENARIO_CURVE_PATH: ${{ runner.temp }}/scenario.json
+      - run: python scripts/build_static_public_release.py --output web/public --release-id ci
+        env:
+          RETENTION_WAREHOUSE_PATH: ${{ runner.temp }}/retention.duckdb
+      - run: npm run build:public
+        working-directory: web
+      - run: python scripts/verify_static_public_bundle.py

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "status": "passed",
+  "scope": "repeat_subscribers_only",
+  "eligible_subscribers": 881701,
+  "maximum_absolute_reconciliation_error": 0,
+  "api_p95_ms": 2.619,
+  "assumed_lift_is_causal_estimate": false,
+  "value_is_recognized_revenue": false,
+  "limitations": [
+    "Lift is a user assumption, not measured causal impact.",
+    "Latest payment is a gross-receipt proxy, not margin, lifetime value, or forecast value."
+  ]
+}

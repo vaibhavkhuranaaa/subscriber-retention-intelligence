@@ -1,0 +1,27 @@
+{
+  "name": "subscriber-retention-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "build:public": "VITE_RETENTION_STATIC_PUBLIC=1 tsc -b && VITE_RETENTION_STATIC_PUBLIC=1 vite build",
+    "lint": "tsc -b --pretty false",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "echarts": "^6.1.0",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.62.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1"
+  }
+}

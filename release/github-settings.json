@@ -1,0 +1,11 @@
+{
+  "repository_name": "subscriber-retention-intelligence",
+  "default_branch": "main",
+  "description": "Governed consumer subscription retention analytics with cutoff-safe semantics, calibrated churn scoring, and bounded scenario planning.",
+  "homepage": "https://subscriber-retention-intelligence.pages.dev/",
+  "topics": ["analytics-engineering", "churn", "dbt", "duckdb", "fastapi", "power-bi", "react", "retention"],
+  "visibility": "public",
+  "license": "MIT",
+  "legacy_branch_action": "deleted after green main verification",
+  "apply_status": "applied"
+}

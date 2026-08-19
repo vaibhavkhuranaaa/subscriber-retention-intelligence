@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0d293c" />
+    <meta name="description" content="Governed consumer subscription retention analysis." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23102a3d'/%3E%3Cpath d='M18 18h28v8H28v7h15v8H28v15H18z' fill='%23f7f6f0'/%3E%3C/svg%3E" />
+    <style>
+      .skip-link { position: fixed; top: -80px; }
+      .skip-link:focus { top: 18px; }
+      .boot-fallback {
+        max-width: 42rem;
+        margin: 12vh auto;
+        padding: 2rem;
+        color: #102a3d;
+        font: 16px/1.6 system-ui, sans-serif;
+        opacity: 0;
+        animation: reveal-fallback 1ms 1.5s forwards;
+      }
+      .boot-fallback h1 { font-size: clamp(2rem, 6vw, 4rem); line-height: 1; }
+      .boot-fallback code { overflow-wrap: anywhere; }
+      @keyframes reveal-fallback { to { opacity: 1; } }
+    </style>
+    <title>Subscriber Retention Intelligence</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to analysis</a>
+    <div id="root">
+      <main class="boot-fallback">
+        <h1>Serve the dashboard over HTTP.</h1>
+        <p>This source file is not a standalone website. From the repository root, run <code>cd web &amp;&amp; npm run build</code>, then <code>cd .. &amp;&amp; .venv/bin/uvicorn retention_api.main:app --host 127.0.0.1 --port 8000</code>.</p>
+        <p>Open <code>http://127.0.0.1:8000</code> after the server starts.</p>
+      </main>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

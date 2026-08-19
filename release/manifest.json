@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "release_id": "public-m12",
+  "status": "public_deployed",
+  "product": "Subscriber Retention Intelligence",
+  "license": "MIT",
+  "public_mode": "aggregate_dashboard_plus_row_level_dataset",
+  "private_mode": "local_pseudonymous_drill_down",
+  "source_attribution": {
+    "format": "structured_json_data",
+    "presentation_markup_allowed": false
+  },
+  "detailed_data": {
+    "status": "public_deployed",
+    "provider": "hugging_face_dataset",
+    "dataset_url": "https://huggingface.co/datasets/vaibhavkhurana/subscriber-retention-intelligence",
+    "rows": 442211685,
+    "parquet_files": 32,
+    "compressed_bytes": 7522254856,
+    "dataset_viewer_configs": 4,
+    "recurring_cost_ceiling_usd": 0,
+    "private_salt_published": false
+  },
+  "quality_jobs": ["backend-contracts", "browser-product"],
+  "required_viewports": [
+    {"width": 1440, "height": 1000},
+    {"width": 390, "height": 844}
+  ],
+  "permanent_demo": {
+    "deployment_status": "deployed",
+    "provider": "cloudflare_pages",
+    "demo_url": "https://subscriber-retention-intelligence.pages.dev/",
+    "deployment_id": "ce2a4cc3-a138-4f23-9716-bc368c61f7b4",
+    "deployment_alias": "https://ce2a4cc3.subscriber-retention-intelligence.pages.dev/",
+    "source_status": "source_controlled_release",
+    "recurring_cost_ceiling_usd": 0,
+    "request_limit_required_before_publication": false,
+    "request_compute_ceiling": 0,
+    "request_policy": "static_assets_only_no_pages_functions",
+    "rollback": "Cloudflare Pages immutable deployment history"
+  },
+  "scaled_evidence": {
+    "status": "closed_without_provider_execution",
+    "cost_ceiling_usd": 0,
+    "actual_cost_usd": 0,
+    "limitation": "Fabric runtime, Direct Lake behavior, and Power BI engine reconciliation remain unverified."
+  },
+  "portfolio": {
+    "status": "public_deployed",
+    "url": "https://portfolio-reeper1.vercel.app/projects/subscriber-retention-intelligence",
+    "release_contract": "portfolio/release.json",
+    "recurring_cost_ceiling_usd": 0
+  },
+  "limitations": [
+    "Consumer subscription, not enterprise SaaS.",
+    "Gross receipts are not recognized revenue.",
+    "Historical churn association does not measure treatment response.",
+    "Power BI engine reconciliation remains unverified until approved browser execution."
+  ]
+}

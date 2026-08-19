@@ -1,0 +1,176 @@
+version: 2
+
+models:
+  - name: stg_members
+    description: Private member facts read directly from validated Parquet.
+    columns:
+      - name: subscriber_token
+        data_tests: [not_null, unique]
+
+  - name: stg_churn_labels
+    description: Separate observed February and March churn-label windows.
+    columns:
+      - name: subscriber_token
+        data_tests: [not_null]
+      - name: label_window
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['2017-02', '2017-03']
+      - name: is_churn
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+                quote: false
+
+  - name: int_subscriber_cutoffs
+    description: One eligible subscriber and label-window cutoff.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [subscriber_token, label_window]
+    columns:
+      - name: history_cutoff
+        data_tests: [not_null]
+
+  - name: fct_subscriber_snapshot
+    description: Private governed cutoff-safe subscriber snapshot for observed label populations.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [subscriber_token, label_window]
+    columns:
+      - name: subscriber_token
+        data_tests: [not_null]
+      - name: label_window
+        data_tests: [not_null]
+      - name: is_churn
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1]
+                quote: false
+      - name: engagement_segment
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['Dormant', 'Light', 'Steady', 'High']
+
+  - name: mart_retention_overview
+    description: One governed KPI row per observed label window.
+    columns:
+      - name: label_window
+        data_tests: [not_null, unique]
+      - name: eligible_subscribers
+        data_tests: [not_null]
+
+  - name: mart_renewal_cohort
+    description: Registration-cohort renewal and churn outcomes.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [label_window, registration_cohort_month]
+
+  - name: mart_engagement_segment
+    description: Engagement-segment retention outcomes.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [label_window, engagement_segment]
+
+  - name: mart_subscription_segment
+    description: Governed plan, payment, registration, and auto-renew outcomes.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [label_window, dimension, segment_key]
+    columns:
+      - name: dimension
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['payment_method', 'plan_days', 'registration_method', 'auto_renew']
+
+  - name: mart_private_review_population
+    description: Private bounded inspection set, never an intervention ranking.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [subscriber_token, label_window]
+
+  - name: mart_private_review_transaction
+    description: Latest 24 cutoff-safe transactions for bounded private inspection records.
+    columns:
+      - name: subscriber_token
+        data_tests: [not_null]
+
+  - name: mart_private_review_listening_monthly
+    description: Six-month listening summaries for bounded private inspection records.
+    data_tests:
+      - unique_combination:
+          arguments:
+            combination_of_columns: [subscriber_token, label_window, activity_month]
+
+  - name: public_retention_overview
+    description: Aggregate-only public KPI extract.
+    columns:
+      - name: label_window
+        data_tests: [not_null, unique]
+
+  - name: public_renewal_cohort
+    description: Aggregate-only cohort extract with minimum group size enforced.
+    columns:
+      - name: eligible_subscribers
+        data_tests: [not_null]
+
+  - name: public_engagement_segment
+    description: Aggregate-only engagement extract with minimum group size enforced.
+    columns:
+      - name: eligible_subscribers
+        data_tests: [not_null]
+
+  - name: public_subscription_segment
+    description: Aggregate-only subscription dimension extract with minimum group size enforced.
+    columns:
+      - name: eligible_subscribers
+        data_tests: [not_null]
+
+  - name: public_metric_definition
+    description: Public metric definitions and limitations.
+    columns:
+      - name: metric_id
+        data_tests: [not_null, unique]
+
+exposures:
+  - name: private_retention_product
+    type: application
+    maturity: medium
+    description: Private detailed retention workflow for lifecycle analysis.
+    depends_on:
+      - ref('fct_subscriber_snapshot')
+      - ref('mart_retention_overview')
+      - ref('mart_renewal_cohort')
+      - ref('mart_engagement_segment')
+      - ref('mart_subscription_segment')
+      - ref('mart_private_review_population')
+      - ref('mart_private_review_transaction')
+      - ref('mart_private_review_listening_monthly')
+    owner:
+      name: Subscription Lifecycle Analytics
+      email: owner@example.invalid
+
+  - name: public_retention_product
+    type: application
+    maturity: high
+    description: Aggregate-only public retention evidence boundary.
+    depends_on:
+      - ref('public_retention_overview')
+      - ref('public_renewal_cohort')
+      - ref('public_engagement_segment')
+      - ref('public_subscription_segment')
+      - ref('public_metric_definition')
+    owner:
+      name: Subscription Lifecycle Analytics
+      email: owner@example.invalid

@@ -1,0 +1,11 @@
+EVALUATE
+UNION(
+    ROW("control_id", "2017-02:eligible", "measure_id", "overview_eligible_subscribers", "actual_value", CALCULATE([Overview Eligible Subscribers], TREATAS({"2017-02"}, 'dim_label_window'[label_window]))),
+    ROW("control_id", "2017-02:renewed", "measure_id", "overview_renewed_subscribers", "actual_value", CALCULATE([Overview Renewed Subscribers], TREATAS({"2017-02"}, 'dim_label_window'[label_window]))),
+    ROW("control_id", "2017-02:churned", "measure_id", "overview_churned_subscribers", "actual_value", CALCULATE([Overview Churned Subscribers], TREATAS({"2017-02"}, 'dim_label_window'[label_window]))),
+    ROW("control_id", "2017-02:gross_receipts_lifetime", "measure_id", "overview_gross_receipts_lifetime", "actual_value", CALCULATE([Overview Gross Receipts Lifetime], TREATAS({"2017-02"}, 'dim_label_window'[label_window]))),
+    ROW("control_id", "2017-03:eligible", "measure_id", "overview_eligible_subscribers", "actual_value", CALCULATE([Overview Eligible Subscribers], TREATAS({"2017-03"}, 'dim_label_window'[label_window]))),
+    ROW("control_id", "2017-03:renewed", "measure_id", "overview_renewed_subscribers", "actual_value", CALCULATE([Overview Renewed Subscribers], TREATAS({"2017-03"}, 'dim_label_window'[label_window]))),
+    ROW("control_id", "2017-03:churned", "measure_id", "overview_churned_subscribers", "actual_value", CALCULATE([Overview Churned Subscribers], TREATAS({"2017-03"}, 'dim_label_window'[label_window]))),
+    ROW("control_id", "2017-03:gross_receipts_lifetime", "measure_id", "overview_gross_receipts_lifetime", "actual_value", CALCULATE([Overview Gross Receipts Lifetime], TREATAS({"2017-03"}, 'dim_label_window'[label_window])))
+)

@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "status": "enabled",
+  "provider": "Cloudflare Pages",
+  "workflow": "manual verified static deployment",
+  "deploymentTarget": "subscriber-retention-intelligence.pages.dev",
+  "publicProject": true,
+  "verification": {
+    "url": "https://subscriber-retention-intelligence.pages.dev/health.json",
+    "sourceShaField": "source_sha"
+  },
+  "paidResource": false,
+  "costApprovalRequired": false
+}

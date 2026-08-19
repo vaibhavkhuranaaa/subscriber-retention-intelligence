@@ -1,0 +1,168 @@
+{
+  "version": 1,
+  "model": "Subscriber Retention Intelligence",
+  "compatibility": "Power BI Service browser semantic modeling and Direct Lake",
+  "tables": [
+    {
+      "name": "dim_label_window",
+      "kind": "dimension",
+      "source_mart": "mart_retention_overview",
+      "source_sql": "select label_window, history_cutoff from mart_retention_overview",
+      "grain": ["label_window"],
+      "columns": [
+        {"name": "label_window", "type": "Text", "hidden": false},
+        {"name": "history_cutoff", "type": "Date", "hidden": false}
+      ]
+    },
+    {
+      "name": "dim_registration_cohort",
+      "kind": "dimension",
+      "source_mart": "mart_renewal_cohort",
+      "source_sql": "select distinct coalesce(strftime(registration_cohort_month, '%Y-%m-%d'), 'unknown') as registration_cohort_key, registration_cohort_month, coalesce(strftime(registration_cohort_month, '%B %Y'), 'Unknown registration cohort') as registration_cohort_label, coalesce(year(registration_cohort_month) * 100 + month(registration_cohort_month), 0) as registration_cohort_sort from mart_renewal_cohort",
+      "grain": ["registration_cohort_key"],
+      "columns": [
+        {"name": "registration_cohort_key", "type": "Text", "hidden": true},
+        {"name": "registration_cohort_month", "type": "Date", "hidden": true},
+        {"name": "registration_cohort_label", "type": "Text", "hidden": false},
+        {"name": "registration_cohort_sort", "type": "Whole number", "hidden": true}
+      ]
+    },
+    {
+      "name": "dim_engagement_segment",
+      "kind": "dimension",
+      "source_mart": "mart_engagement_segment",
+      "source_sql": "select distinct engagement_segment, case engagement_segment when 'dormant' then 1 when 'light' then 2 when 'steady' then 3 when 'high' then 4 else 5 end as engagement_segment_sort from mart_engagement_segment",
+      "grain": ["engagement_segment"],
+      "columns": [
+        {"name": "engagement_segment", "type": "Text", "hidden": false},
+        {"name": "engagement_segment_sort", "type": "Whole number", "hidden": true}
+      ]
+    },
+    {
+      "name": "dim_subscription_segment",
+      "kind": "dimension",
+      "source_mart": "mart_subscription_segment",
+      "source_sql": "select distinct dimension || ':' || segment_key as subscription_segment_key, dimension, segment_key, segment_label from mart_subscription_segment",
+      "grain": ["subscription_segment_key"],
+      "columns": [
+        {"name": "subscription_segment_key", "type": "Text", "hidden": true},
+        {"name": "dimension", "type": "Text", "hidden": false},
+        {"name": "segment_key", "type": "Text", "hidden": true},
+        {"name": "segment_label", "type": "Text", "hidden": false}
+      ]
+    },
+    {
+      "name": "dim_metric_definition",
+      "kind": "dimension",
+      "source_mart": "public_metric_definition",
+      "source_sql": "select metric_id, definition, grain, direction, limitation from public_metric_definition",
+      "grain": ["metric_id"],
+      "disconnected": true,
+      "columns": [
+        {"name": "metric_id", "type": "Text", "hidden": false},
+        {"name": "definition", "type": "Text", "hidden": false},
+        {"name": "grain", "type": "Text", "hidden": false},
+        {"name": "direction", "type": "Text", "hidden": false},
+        {"name": "limitation", "type": "Text", "hidden": false}
+      ]
+    },
+    {
+      "name": "fct_retention_overview",
+      "kind": "fact",
+      "source_mart": "mart_retention_overview",
+      "source_sql": "select label_window, cast(eligible_subscribers as bigint) eligible_subscribers, cast(active_subscribers as bigint) active_subscribers, cast(observed_renewed_subscribers as bigint) observed_renewed_subscribers, cast(observed_churned_subscribers as bigint) observed_churned_subscribers, cast(gross_receipts_lifetime as bigint) gross_receipts_lifetime, cast(gross_receipts_30d as bigint) gross_receipts_30d, cast(gross_receipts_90d as bigint) gross_receipts_90d, cast(subscription_event_count_lifetime as bigint) subscription_event_count_lifetime, cast(cancellation_event_count_lifetime as bigint) cancellation_event_count_lifetime, cast(listening_active_days_30d as bigint) listening_active_days_30d, cast(listening_active_days_90d as bigint) listening_active_days_90d, cast(full_completion_count_30d as bigint) full_completion_count_30d, cast(negative_duration_rows_90d as bigint) negative_duration_rows_90d from mart_retention_overview",
+      "grain": ["label_window"],
+      "columns": [
+        {"name": "label_window", "type": "Text", "hidden": true},
+        {"name": "eligible_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "active_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_renewed_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_churned_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "gross_receipts_lifetime", "type": "Whole number", "hidden": true},
+        {"name": "gross_receipts_30d", "type": "Whole number", "hidden": true},
+        {"name": "gross_receipts_90d", "type": "Whole number", "hidden": true},
+        {"name": "subscription_event_count_lifetime", "type": "Whole number", "hidden": true},
+        {"name": "cancellation_event_count_lifetime", "type": "Whole number", "hidden": true},
+        {"name": "listening_active_days_30d", "type": "Whole number", "hidden": true},
+        {"name": "listening_active_days_90d", "type": "Whole number", "hidden": true},
+        {"name": "full_completion_count_30d", "type": "Whole number", "hidden": true},
+        {"name": "negative_duration_rows_90d", "type": "Whole number", "hidden": true}
+      ]
+    },
+    {
+      "name": "fct_renewal_cohort",
+      "kind": "fact",
+      "source_mart": "mart_renewal_cohort",
+      "source_sql": "select label_window, coalesce(strftime(registration_cohort_month, '%Y-%m-%d'), 'unknown') as registration_cohort_key, cast(eligible_subscribers as bigint) eligible_subscribers, cast(observed_renewed_subscribers as bigint) observed_renewed_subscribers, cast(observed_churned_subscribers as bigint) observed_churned_subscribers, cast(gross_receipts_90d as bigint) gross_receipts_90d from mart_renewal_cohort",
+      "grain": ["label_window", "registration_cohort_key"],
+      "columns": [
+        {"name": "label_window", "type": "Text", "hidden": true},
+        {"name": "registration_cohort_key", "type": "Text", "hidden": true},
+        {"name": "eligible_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_renewed_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_churned_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "gross_receipts_90d", "type": "Whole number", "hidden": true}
+      ]
+    },
+    {
+      "name": "fct_engagement_segment",
+      "kind": "fact",
+      "source_mart": "mart_engagement_segment",
+      "source_sql": "select label_window, engagement_segment, cast(eligible_subscribers as bigint) eligible_subscribers, cast(observed_renewed_subscribers as bigint) observed_renewed_subscribers, cast(observed_churned_subscribers as bigint) observed_churned_subscribers, average_listening_active_days_30d, average_listening_seconds_30d, cast(full_completion_count_30d as bigint) full_completion_count_30d from mart_engagement_segment",
+      "grain": ["label_window", "engagement_segment"],
+      "columns": [
+        {"name": "label_window", "type": "Text", "hidden": true},
+        {"name": "engagement_segment", "type": "Text", "hidden": true},
+        {"name": "eligible_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_renewed_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_churned_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "average_listening_active_days_30d", "type": "Decimal number", "hidden": true},
+        {"name": "average_listening_seconds_30d", "type": "Decimal number", "hidden": true},
+        {"name": "full_completion_count_30d", "type": "Whole number", "hidden": true}
+      ]
+    },
+    {
+      "name": "fct_subscription_segment",
+      "kind": "fact",
+      "source_mart": "mart_subscription_segment",
+      "source_sql": "select label_window, dimension || ':' || segment_key as subscription_segment_key, cast(eligible_subscribers as bigint) eligible_subscribers, cast(observed_renewed_subscribers as bigint) observed_renewed_subscribers, cast(observed_churned_subscribers as bigint) observed_churned_subscribers, cast(gross_receipts_90d as bigint) gross_receipts_90d from mart_subscription_segment",
+      "grain": ["label_window", "subscription_segment_key"],
+      "columns": [
+        {"name": "label_window", "type": "Text", "hidden": true},
+        {"name": "subscription_segment_key", "type": "Text", "hidden": true},
+        {"name": "eligible_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_renewed_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "observed_churned_subscribers", "type": "Whole number", "hidden": true},
+        {"name": "gross_receipts_90d", "type": "Whole number", "hidden": true}
+      ]
+    }
+  ],
+  "relationships": [
+    {"from_table": "dim_label_window", "from_column": "label_window", "to_table": "fct_retention_overview", "to_column": "label_window", "cardinality": "one_to_many", "cross_filter": "single", "active": true},
+    {"from_table": "dim_label_window", "from_column": "label_window", "to_table": "fct_renewal_cohort", "to_column": "label_window", "cardinality": "one_to_many", "cross_filter": "single", "active": true},
+    {"from_table": "dim_label_window", "from_column": "label_window", "to_table": "fct_engagement_segment", "to_column": "label_window", "cardinality": "one_to_many", "cross_filter": "single", "active": true},
+    {"from_table": "dim_label_window", "from_column": "label_window", "to_table": "fct_subscription_segment", "to_column": "label_window", "cardinality": "one_to_many", "cross_filter": "single", "active": true},
+    {"from_table": "dim_registration_cohort", "from_column": "registration_cohort_key", "to_table": "fct_renewal_cohort", "to_column": "registration_cohort_key", "cardinality": "one_to_many", "cross_filter": "single", "active": true},
+    {"from_table": "dim_engagement_segment", "from_column": "engagement_segment", "to_table": "fct_engagement_segment", "to_column": "engagement_segment", "cardinality": "one_to_many", "cross_filter": "single", "active": true},
+    {"from_table": "dim_subscription_segment", "from_column": "subscription_segment_key", "to_table": "fct_subscription_segment", "to_column": "subscription_segment_key", "cardinality": "one_to_many", "cross_filter": "single", "active": true}
+  ],
+  "measure_file": "powerbi/measures.dax",
+  "fixed_context_query": "powerbi/fixed-context-controls.dax",
+  "contexts": [
+    {"id": "overview_2017_02", "label_window": "2017-02"},
+    {"id": "overview_2017_03", "label_window": "2017-03"},
+    {"id": "cohort_2017_01_march", "label_window": "2017-03", "registration_cohort_key": "2017-01-01"},
+    {"id": "engagement_high_march", "label_window": "2017-03", "engagement_segment": "high"},
+    {"id": "auto_renew_on_march", "label_window": "2017-03", "dimension": "auto_renew", "subscription_segment_key": "auto_renew:1"}
+  ],
+  "forbidden_columns": ["subscriber_token", "source_id", "msno", "city_code", "age_reported", "gender", "registration_method_code"],
+  "rules": {
+    "auto_detect_relationships": false,
+    "fact_to_fact_relationships": false,
+    "bidirectional_relationships": false,
+    "single_label_window_required": true,
+    "single_subscription_dimension_required": true,
+    "currency": "source currency units; no symbol or conversion",
+    "stored_rate_columns_visible": false
+  }
+}

@@ -1,0 +1,264 @@
+{
+  "version": 2,
+  "slug": "subscriber-retention-intelligence",
+  "title": "Subscriber Retention Intelligence",
+  "summary": "A governed retention analysis system over 442,211,685 accepted membership, payment, listening, and churn-label rows, with cutoff-safe cohorts, a calibrated repeat-subscriber model, and an assumption-bound intervention planner.",
+  "outcome": "A subscription lifecycle analyst can locate material renewal and engagement changes, compare cohorts and segments on governed definitions, and test a finite contact program without confusing historical risk with causal treatment response.",
+  "industries": ["Digital Media", "Consumer Subscriptions"],
+  "categories": ["Analytics", "Data Engineering", "AI/ML", "Cloud"],
+  "stack": ["Python", "DuckDB", "dbt Core", "Parquet", "scikit-learn", "FastAPI", "React", "TypeScript", "Cloudflare Pages", "Hugging Face Datasets", "Power BI semantic contracts"],
+  "githubUrl": "https://github.com/vaibhavkhuranaaa/subscriber-retention-intelligence",
+  "liveUrl": "https://subscriber-retention-intelligence.pages.dev/",
+  "deployment": {
+    "provider": "Cloudflare Pages and Hugging Face Datasets",
+    "status": "live",
+    "runtime": "Static Cloudflare Pages assets with no Pages Functions or request-time private data path; 32 transformed Parquet files are served separately by Hugging Face.",
+    "exposure": "anonymous",
+    "productionClaim": false,
+    "verifiedAt": "2026-08-19T00:00:00Z",
+    "expiresAt": null,
+    "evidenceRefs": ["deployment.live", "data.release"]
+  },
+  "metrics": [
+    "442,211,685 accepted analytical rows reconcile to the public release",
+    "5.57% repeat-subscriber log-loss improvement over the logistic baseline",
+    "0.0166 expected calibration error for the supported repeat-subscriber population",
+    "4.95 top-decile churn lift",
+    "0 maximum absolute scenario-formula reconciliation error",
+    "216.025 ms production static-delivery P95 in the recorded 30-request check"
+  ],
+  "stages": [
+    "Stream compressed archives through schema, row, overlap, and checksum controls",
+    "Build detailed typed facts and cutoff-safe semantic marts",
+    "Evaluate baseline and calibrated challenger without post-cutoff activity",
+    "Bound probability use to repeat subscribers and precompute the private scenario curve",
+    "Publish the static analysis product and complete transformed row-level dataset"
+  ],
+  "architecture": [
+    "Source archives remain outside Git and stream into typed partitioned Parquet",
+    "DuckDB and dbt reconstruct subscriber state, snapshots, cohorts, segments, and metric marts",
+    "A calibrated challenger scores only the population supported by the evaluation contract",
+    "React consumes governed public aggregates while private routes remain local",
+    "Cloudflare Pages serves the zero-compute interface and Hugging Face serves the complete transformed Parquet release"
+  ],
+  "evaluation": [
+    "Only two label windows exist, so February uses a deterministic fit and cross-sectional calibration split while March remains untouched for final evaluation",
+    "The supported March repeat-subscriber population contains 881,701 rows; 89,259 March-new subscribers are excluded from probability use",
+    "The selected histogram gradient boosting model improves log loss by 5.57 percent with 0.0166 expected calibration error and 4.95 top-decile lift",
+    "Scenario formulas reconcile with zero maximum absolute error across capacity, threshold, lift, cost, and empty-set edge cases",
+    "Public delivery, browser behavior, responsive layout, accessibility, privacy, and row-level release inventory are verified"
+  ],
+  "operationalTradeoffs": [
+    "Static public delivery removes request-time compute and private data access but does not offer public subscriber drill-down",
+    "The full dataset is distributed as Parquet rather than queried through a hosted warehouse, keeping recurring project cost at zero",
+    "March-new subscribers are excluded from probability use even though they churn more often, because their calibration contract fails",
+    "Latest payment supports a gross-receipt sensitivity proxy only; it cannot support revenue, margin, or lifetime-value claims",
+    "Actual Fabric and Power BI engine execution was closed unrun to preserve the zero-additional-cost constraint"
+  ],
+  "disclaimer": "This public project uses a transformed consumer subscription dataset under the owner-approved source terms. It is not confidential enterprise data. Release-specific keys replace source identifiers, exact age and registration date are generalized, and private tokens, model artifacts, publication salt, and private subscriber views are excluded. Historical churn association does not establish treatment response.",
+  "presentation": {
+    "question": "Which retention movements need investigation, and where could finite outreach be plausible without overstating the evidence?",
+    "answer": "The product separates descriptive movement, calibrated historical risk, and simulated economics. The challenger is supported only for 881,701 repeat subscribers, improves log loss by 5.57 percent, and concentrates churn 4.95 times above baseline in the top decile. Contact economics remain declared sensitivity assumptions, not causal forecasts.",
+    "decisionSupported": "Prioritize retention investigation and evaluate a bounded contact scenario for the supported repeat-subscriber population.",
+    "evaluationMode": "February fit and disjoint calibration holdout, followed by one untouched March test window.",
+    "coverImage": "docs/assets/dashboard-desktop-stakeholder.png",
+    "coverAlt": "Subscriber retention analysis dashboard showing material movements, cohort comparisons, and governed metric context"
+  },
+  "dataDisclosure": {
+    "source": "KKBox Churn Prediction Challenge membership, transaction, listening, and churn-label data obtained by the owner through Kaggle",
+    "license": "Provider terms govern source and transformed data; the repository MIT license applies only to code and documentation",
+    "classification": "public",
+    "permittedUse": "Owner-approved public analytical demonstration and transformed row-level publication with attribution and privacy controls",
+    "includedFields": [
+      "release-specific subscriber and event keys",
+      "generalized member attributes",
+      "subscription transaction amounts, dates, plan terms, cancellation, and auto-renewal indicators",
+      "daily listening aggregates",
+      "observed churn labels and cutoff-safe public aggregates"
+    ],
+    "excludedFields": [
+      "source subscriber identifiers and deterministic private tokens",
+      "exact age and exact member registration date",
+      "private publication salt, model artifact, scenario curve, and private warehouse"
+    ],
+    "deployedArtifactContents": [
+      "A static aggregate analysis product with no server function",
+      "442,211,685 transformed rows in 32 Zstandard-compressed Parquet files",
+      "A public dataset manifest and four Dataset Viewer configurations"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "deployment.live",
+      "kind": "deployment",
+      "claim": "The analysis product is live as static Cloudflare Pages assets with no request-time compute or private API route.",
+      "source": "https://subscriber-retention-intelligence.pages.dev/",
+      "method": "Production HTTP, browser, bundle-boundary, accessibility, and responsive checks",
+      "execution": "live"
+    },
+    {
+      "id": "data.release",
+      "kind": "disclosure",
+      "claim": "The public dataset contains all 442,211,685 accepted transformed rows in 32 Parquet files totaling 7,522,254,856 bytes.",
+      "source": "https://huggingface.co/datasets/vaibhavkhurana/subscriber-retention-intelligence",
+      "method": "Exact local and remote manifest, row, byte, key-collision, and Dataset Viewer reconciliation",
+      "result": true,
+      "execution": "live"
+    },
+    {
+      "id": "pipeline.reconciliation",
+      "kind": "test",
+      "claim": "Accepted source rows reconcile through typed facts and the public release with no private token matches.",
+      "source": "tests/test_fact_pipeline.py and tests/test_detailed_public_release.py",
+      "method": "Single-threaded deterministic pipeline and independent release verifier",
+      "result": true,
+      "execution": "deterministic"
+    },
+    {
+      "id": "model.evaluation",
+      "kind": "evaluation",
+      "claim": "The calibrated challenger passes only for repeat subscribers, improving log loss by 5.57 percent with 0.0166 expected calibration error and 4.95 top-decile lift.",
+      "source": "evaluation/churn-model.json",
+      "method": "February fit and calibration split followed by one untouched March evaluation",
+      "result": true,
+      "execution": "deterministic",
+      "caveat": "The calibration holdout is cross-sectional, not a third time period, and March-new probability use is blocked."
+    },
+    {
+      "id": "scenario.reconciliation",
+      "kind": "evaluation",
+      "claim": "The repeat-subscriber capacity and sensitivity planner reconciles with zero maximum absolute formula error.",
+      "source": "evaluation/scenario.json",
+      "method": "Independent arithmetic checks across threshold, capacity, lift, cost, and empty-set cases",
+      "result": 0,
+      "execution": "deterministic",
+      "caveat": "Lift is user assumed and is not a causal estimate."
+    },
+    {
+      "id": "delivery.tests",
+      "kind": "test",
+      "claim": "Backend contracts and desktop and mobile browser product checks pass in hosted CI.",
+      "source": ".github/workflows/ci.yml",
+      "method": "Python contracts, Ruff, TypeScript build, Playwright, accessibility, privacy, and static bundle checks",
+      "result": true,
+      "execution": "integration"
+    }
+  ],
+  "story": {
+    "recruiterSummary": "A full-depth retention analysis system over 442.2 million accepted rows that combines governed descriptive analysis, a carefully scoped churn model, an assumption-bound scenario planner, and a complete zero-cost public data release.",
+    "technicalNarrative": "Compressed sources stream into typed Parquet, then DuckDB and dbt reconstruct subscription state and build cutoff-safe snapshots, cohorts, segments, and metric marts. A calibrated nonlinear challenger is compared with a logistic baseline and is shipped only for repeat subscribers. The public interface is static, while the complete transformed data plane is distributed separately as Parquet.",
+    "scalabilityRoadmap": [
+      "Partition controls and one-thread DuckDB execution already process the full 442.2 million-row corpus locally",
+      "A hosted query plane can be added only when a real latency or concurrency requirement justifies recurring compute",
+      "Actual Fabric and Power BI engine evidence can reopen only under a separately approved budget",
+      "Causal uplift modeling requires randomized intervention, delivery, acceptance, and outcome data that the source does not contain"
+    ],
+    "executiveSummary": "The project turns a large historical subscription corpus into an auditable decision workflow. It identifies material retention changes, evaluates a calibrated risk model without hiding its population failure, and lets an analyst test finite outreach assumptions. It publishes both the interface and every accepted transformed row while keeping recurring project cost and public request-time compute at zero.",
+    "intendedUser": "A subscription lifecycle analyst or retention lead reviewing renewal behavior, engagement change, historical churn risk, and finite contact capacity.",
+    "example": {
+      "title": "Investigating a retention movement before planning outreach",
+      "steps": [
+        "Open the overview and identify a material movement rather than reading isolated KPI cards",
+        "Compare matched renewal cohorts and descriptive engagement or subscription segments",
+        "Open definitions and freshness evidence before interpreting the change",
+        "In private mode, review the supported repeat-subscriber risk population",
+        "Run low, base, and high assumed-lift cases with one fixed selected set and explicit spend"
+      ]
+    },
+    "technologyDecisions": [
+      {
+        "technology": "DuckDB, dbt Core, and partitioned Parquet",
+        "rationale": "They preserve full analytical detail and governed SQL semantics on one machine without a managed warehouse bill.",
+        "alternative": "A permanent cloud data warehouse",
+        "tradeoff": "Local batch execution has no shared concurrency or provider-native monitoring."
+      },
+      {
+        "technology": "Static React on Cloudflare Pages",
+        "rationale": "The public analytical product fits in governed extracts and needs no request-time private data access.",
+        "alternative": "A server-backed public dashboard",
+        "tradeoff": "Public subscriber drill-down and arbitrary queries are deliberately unavailable."
+      },
+      {
+        "technology": "Hugging Face Parquet dataset",
+        "rationale": "It publishes every transformed accepted row with file delivery and dataset browsing at zero recurring project cost.",
+        "alternative": "Object storage plus a custom catalog or live query API",
+        "tradeoff": "Users download or query Parquet rather than receiving an interactive hosted warehouse endpoint."
+      },
+      {
+        "technology": "Calibrated histogram gradient boosting with a logistic baseline",
+        "rationale": "The nonlinear challenger materially improves held-out log loss while calibration and lift remain measurable against a named simple comparator.",
+        "alternative": "One model reported without a baseline or population gate",
+        "tradeoff": "Probability use is restricted to repeat subscribers and cannot cover the high-churn March-new group."
+      }
+    ],
+    "evidence": [
+      {
+        "value": "442,211,685",
+        "label": "Accepted rows published",
+        "context": "All transformed analytical rows across membership, transaction, listening, and churn-label tables",
+        "method": "Exact local and remote manifest reconciliation",
+        "evidenceRefs": ["data.release"]
+      },
+      {
+        "value": "5.57%",
+        "label": "Repeat-subscriber log-loss improvement",
+        "context": "Selected challenger against the logistic baseline on the untouched March test window",
+        "method": "Predeclared fit, calibration, and test contract",
+        "evidenceRefs": ["model.evaluation"]
+      },
+      {
+        "value": "0.0166",
+        "label": "Expected calibration error",
+        "context": "Supported repeat-subscriber probability population only",
+        "method": "Untouched March evaluation",
+        "evidenceRefs": ["model.evaluation"]
+      },
+      {
+        "value": "0",
+        "label": "Maximum scenario formula error",
+        "context": "Independent reconciliation across edge cases",
+        "method": "Deterministic scenario verifier",
+        "evidenceRefs": ["scenario.reconciliation"]
+      },
+      {
+        "value": "$0",
+        "label": "Recurring project cost",
+        "context": "Static interface and public Parquet distribution with no request-time compute",
+        "method": "Deployment and provider inventory review",
+        "evidenceRefs": ["deployment.live", "data.release"]
+      }
+    ],
+    "limitations": [
+      "Only two observed label windows exist, so calibration validation is cross-sectional rather than a third temporal period",
+      "March-new subscribers fail the probability-use boundary and are excluded from the scenario planner",
+      "The source contains no randomized intervention, contact delivery, offer acceptance, or causal retention outcome",
+      "Gross receipts are not recognized revenue, margin, lifetime value, or future receipts",
+      "The source is a consumer music subscription and has no enterprise account, seat, contract, CSM, or support-case grain",
+      "Actual Fabric runtime, Direct Lake behavior, and Power BI engine reconciliation remain unverified"
+    ]
+  },
+  "resume": {
+    "bulletCandidates": [
+      {
+        "role": "Analytics Engineer",
+        "bullet": "Built a DuckDB and dbt retention warehouse over 442.2 million accepted membership, payment, listening, and churn-label rows, with cutoff and row-reconciliation tests and a complete transformed Parquet release.",
+        "evidenceRefs": ["pipeline.reconciliation", "data.release"]
+      },
+      {
+        "role": "Data Scientist",
+        "bullet": "Scoped a calibrated churn challenger to 881,701 supported repeat subscribers after the March-new population failed calibration, achieving 5.57 percent lower log loss, 0.0166 ECE, and 4.95 top-decile lift on an untouched test window.",
+        "evidenceRefs": ["model.evaluation"]
+      },
+      {
+        "role": "Data Analyst",
+        "bullet": "Designed an exception-led retention workflow that separates observed cohort movement, modeled historical churn risk, and user-assumed scenario economics, with zero formula reconciliation error.",
+        "evidenceRefs": ["scenario.reconciliation", "delivery.tests"]
+      },
+      {
+        "role": "Data Engineer",
+        "bullet": "Published 442,211,685 transformed rows as 32 Zstandard-compressed Parquet files and deployed the analysis product with zero public request-time compute and zero recurring project cost.",
+        "evidenceRefs": ["data.release", "deployment.live"]
+      }
+    ]
+  }
+}

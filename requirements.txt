@@ -1,0 +1,6 @@
+duckdb==1.4.4
+dbt-duckdb==1.11.0
+fastapi==0.116.1
+httpx==0.28.1
+uvicorn==0.35.0
+scikit-learn==1.7.2

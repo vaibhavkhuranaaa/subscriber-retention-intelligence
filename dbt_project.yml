@@ -1,0 +1,23 @@
+name: subscriber_retention
+version: 1.0.0
+config-version: 2
+
+profile: subscriber_retention
+model-paths: ["models"]
+test-paths: ["dbt_tests"]
+macro-paths: ["macros"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  subscriber_retention:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: table
+    marts:
+      +materialized: table
+    public:
+      +materialized: table
+
+vars:
+  minimum_public_group_size: 100

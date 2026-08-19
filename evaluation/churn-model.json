@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "decision": "ship_challenger_repeat_only",
+  "selected_model": "histogram_gradient_boosting",
+  "selected_scope": "repeat_subscribers_only",
+  "evaluation_contract": {
+    "fit": {"window": "2017-02", "rows": 198861},
+    "calibration": {"window": "2017-02", "rows": 98740, "limitation": "Disjoint cross-sectional holdout, not a third temporal cutoff."},
+    "test": {"window": "2017-03", "rows": 970960, "untouched_until_final_evaluation": true}
+  },
+  "repeat_subscriber_result": {
+    "rows": 881701,
+    "relative_log_loss_improvement": 0.05569149085670134,
+    "expected_calibration_error": 0.016625013128252097,
+    "top_decile_lift": 4.953496652705015
+  },
+  "ship_rule": {
+    "overall_gate_passed": true,
+    "repeat_subscriber_gate_passed": true,
+    "march_new_probability_use_allowed": false
+  },
+  "feature_contract": {
+    "demographics_used_for_scoring": false,
+    "post_cutoff_activity_used": false,
+    "identifiers_used_for_scoring": false
+  },
+  "limitations": [
+    "Only two observed label windows exist.",
+    "March-new subscribers fail calibration and are excluded from probability use.",
+    "Historical labels do not establish intervention response."
+  ]
+}

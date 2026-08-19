@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "product": "Subscriber Retention Intelligence",
+  "source": {
+    "provider": "KKBox",
+    "collection": "WSDM Churn Prediction Challenge",
+    "obtained_by": "owner",
+    "usage": "Owner-approved public analysis and pseudonymized detailed release; source identifiers excluded",
+    "archive_format": "7z",
+    "source_ids_public": false
+  },
+  "storage": {
+    "codec": "zstd",
+    "projected_derived_limit_gib": 11.0,
+    "free_disk_reserve_gib": 30.0,
+    "downstream_allowance_fraction": 0.2,
+    "expanded_csv_retained": false
+  },
+  "privacy": {
+    "restricted": "Never public: source subscriber identifiers, direct identifiers, raw rows, and precise personal attributes",
+    "sensitive": "Private only unless aggregated and privacy-reviewed",
+    "internal": "Private detailed facts; public only through an approved aggregate schema",
+    "public": "Eligible for public aggregate output after privacy review"
+  },
+  "overlap_rules": {
+    "members": "members_v3 is the sole member snapshot; no version union",
+    "labels": "train and train_v2 are separate challenge windows; never union as one target period",
+    "transactions": "Union versions, collapse byte-identical full-row events with combined version lineage, and retain every nonidentical event in overlapping calendar dates",
+    "listening": "Union versions and fail promotion on duplicate (msno, date) keys or overlapping version date ranges",
+    "samples": "Submission templates are inventoried for provenance but excluded from analytical ingestion"
+  },
+  "churn_windows": {
+    "train": {"label_period": "2017-02", "history_cutoff": 20170131, "candidate_expiration_start": 20170201, "candidate_expiration_end": 20170228, "renewal_observation_end": 20170331},
+    "train_v2": {"label_period": "2017-03", "history_cutoff": 20170228, "candidate_expiration_start": 20170301, "candidate_expiration_end": 20170331, "renewal_observation_end": 20170430},
+    "definition": "A candidate churns when no valid renewal is observed or the first valid renewal is 30 or more days after the effective expiration date.",
+    "same_day_order": ["transaction_date ascending", "plan signature descending", "same-plan renewals by expiration ascending", "same-plan cancellations by expiration descending", "subscription before cancellation"]
+  },
+  "families": {
+    "members": {
+      "grain": "one subscriber",
+      "duplicate_key": ["msno"],
+      "fields": {
+        "msno": {"type": "VARCHAR", "null_policy": "forbid", "allowed": "non-empty source token", "sensitivity": "restricted", "downstream_owner": "dim_member"},
+        "city": {"type": "INTEGER", "null_policy": "allow", "allowed": "non-negative source code", "sensitivity": "sensitive", "downstream_owner": "dim_member"},
+        "bd": {"type": "INTEGER", "null_policy": "allow", "allowed": "source integer; plausibility filtering is downstream", "sensitivity": "sensitive", "downstream_owner": "dim_member"},
+        "gender": {"type": "VARCHAR", "null_policy": "allow", "allowed": "female, male, or empty", "sensitivity": "sensitive", "downstream_owner": "dim_member"},
+        "registered_via": {"type": "INTEGER", "null_policy": "allow", "allowed": "-1 unknown sentinel or non-negative source code", "sensitivity": "internal", "downstream_owner": "dim_member"},
+        "registration_init_time": {"type": "INTEGER", "null_policy": "allow", "allowed": "YYYYMMDD calendar date", "sensitivity": "sensitive", "downstream_owner": "dim_member"}
+      }
+    },
+    "labels": {
+      "grain": "one subscriber in one challenge label window",
+      "duplicate_key": ["msno"],
+      "fact_duplicate_key": ["label_window", "msno"],
+      "fields": {
+        "msno": {"type": "VARCHAR", "null_policy": "forbid", "allowed": "non-empty source token", "sensitivity": "restricted", "downstream_owner": "fact_churn_label"},
+        "is_churn": {"type": "INTEGER", "null_policy": "forbid", "allowed": "0 or 1", "sensitivity": "internal", "downstream_owner": "fact_churn_label"}
+      }
+    },
+    "transactions": {
+      "grain": "one source subscription transaction",
+      "duplicate_key": ["msno", "payment_method_id", "payment_plan_days", "plan_list_price", "actual_amount_paid", "is_auto_renew", "transaction_date", "membership_expire_date", "is_cancel"],
+      "fields": {
+        "msno": {"type": "VARCHAR", "null_policy": "forbid", "allowed": "non-empty source token", "sensitivity": "restricted", "downstream_owner": "fact_subscription_transaction"},
+        "payment_method_id": {"type": "INTEGER", "null_policy": "forbid", "allowed": "positive source code", "sensitivity": "internal", "downstream_owner": "fact_subscription_transaction"},
+        "payment_plan_days": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative integer", "sensitivity": "internal", "downstream_owner": "fact_subscription_transaction"},
+        "plan_list_price": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative gross amount in source currency", "sensitivity": "sensitive", "downstream_owner": "fact_subscription_transaction"},
+        "actual_amount_paid": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative gross amount in source currency", "sensitivity": "sensitive", "downstream_owner": "fact_subscription_transaction"},
+        "is_auto_renew": {"type": "INTEGER", "null_policy": "forbid", "allowed": "0 or 1", "sensitivity": "internal", "downstream_owner": "fact_subscription_transaction"},
+        "transaction_date": {"type": "INTEGER", "null_policy": "forbid", "allowed": "YYYYMMDD calendar date", "sensitivity": "sensitive", "downstream_owner": "fact_subscription_transaction"},
+        "membership_expire_date": {"type": "INTEGER", "null_policy": "forbid", "allowed": "YYYYMMDD calendar date", "sensitivity": "sensitive", "downstream_owner": "fact_subscription_transaction"},
+        "is_cancel": {"type": "INTEGER", "null_policy": "forbid", "allowed": "0 or 1", "sensitivity": "internal", "downstream_owner": "fact_subscription_transaction"}
+      }
+    },
+    "listening": {
+      "grain": "one subscriber and listening date",
+      "duplicate_key": ["msno", "date"],
+      "fields": {
+        "msno": {"type": "VARCHAR", "null_policy": "forbid", "allowed": "non-empty source token", "sensitivity": "restricted", "downstream_owner": "fact_listening_day"},
+        "date": {"type": "INTEGER", "null_policy": "forbid", "allowed": "YYYYMMDD calendar date", "sensitivity": "sensitive", "downstream_owner": "fact_listening_day"},
+        "num_25": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative count", "sensitivity": "internal", "downstream_owner": "fact_listening_day"},
+        "num_50": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative count", "sensitivity": "internal", "downstream_owner": "fact_listening_day"},
+        "num_75": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative count", "sensitivity": "internal", "downstream_owner": "fact_listening_day"},
+        "num_985": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative count", "sensitivity": "internal", "downstream_owner": "fact_listening_day"},
+        "num_100": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative count", "sensitivity": "internal", "downstream_owner": "fact_listening_day"},
+        "num_unq": {"type": "INTEGER", "null_policy": "forbid", "allowed": "non-negative count", "sensitivity": "internal", "downstream_owner": "fact_listening_day"},
+        "total_secs": {"type": "DOUBLE", "null_policy": "forbid", "allowed": "source double; negative upstream anomalies are flagged and canonicalized to zero", "sensitivity": "internal", "downstream_owner": "fact_listening_day"}
+      }
+    }
+  },
+  "archives": [
+    {"name": "members_v3.csv.7z", "member": "members_v3.csv", "family": "members", "selected": true},
+    {"name": "train.csv.7z", "member": "train.csv", "family": "labels", "selected": true, "window": "train"},
+    {"name": "train_v2.csv.7z", "member": "data/churn_comp_refresh/train_v2.csv", "family": "labels", "selected": true, "window": "train_v2"},
+    {"name": "transactions.csv.7z", "member": "transactions.csv", "family": "transactions", "selected": true, "version": "v1"},
+    {"name": "transactions_v2.csv.7z", "member": "data/churn_comp_refresh/transactions_v2.csv", "family": "transactions", "selected": true, "version": "v2"},
+    {"name": "user_logs.csv.7z", "member": "user_logs.csv", "family": "listening", "selected": true, "version": "v1"},
+    {"name": "user_logs_v2.csv.7z", "member": "data/churn_comp_refresh/user_logs_v2.csv", "family": "listening", "selected": true, "version": "v2"},
+    {"name": "sample_submission_zero.csv.7z", "member": "sample_submission_zero.csv", "family": "labels", "selected": false, "exclusion": "submission template, not observed label"},
+    {"name": "sample_submission_v2.csv.7z", "member": "data/churn_comp_refresh/sample_submission_v2.csv", "family": "labels", "selected": false, "exclusion": "submission template, not observed label"}
+  ]
+}

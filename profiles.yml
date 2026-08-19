@@ -1,0 +1,11 @@
+subscriber_retention:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('RETENTION_WAREHOUSE_PATH', '../subscriber-retention-intelligence-ops/data/private/warehouse/retention.duckdb') }}"
+      threads: 1
+      settings:
+        threads: 1
+        memory_limit: 4GB
+        preserve_insertion_order: false
